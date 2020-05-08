@@ -45,7 +45,7 @@ exports.install = function() {
 	*/
 	ROUTE('/{instance}/dialogs',				dialogs,			[]);
 	ROUTE('/{instance}/getChatById',			getChatById,		['post',default_timeout]);
-
+		
 	/*
 	* API ROUTES - Instance Routes
 	* This routes provide you methods to manipulate instance
@@ -55,7 +55,8 @@ exports.install = function() {
 	ROUTE('/{instance}/{masterKey}/isConnected',			isConnected,		[]);
 	ROUTE('/{instance}/{masterKey}/takeOver',				takeOver,			[]);
 	ROUTE('/{instance}/{masterKey}/batteryLevel',			batteryLevel,		[]);
-
+	ROUTE('/{instance}/deleteFile',				deleteFile,			[]);
+	
 	/*
 	* API ROUTES - Server Routes
 	* This routes provide you methods to manipulate instance
@@ -64,7 +65,7 @@ exports.install = function() {
 	ROUTE('/{masterKey}/readInstance',						readInstance,		[]);
 	ROUTE('/{masterKey}/reloadServer',						reloadServer,		[60000]);
 	ROUTE('/{masterKey}/setWebhook',						setWebhook,			['post',default_timeout]);
-
+	
 };
 
 const BODY_CHECK = function(BODY){
@@ -104,6 +105,22 @@ function qrCodeSocket(){
 		console.log(client, message);
 	});
 };
+
+/*
+* Route to delete files
+* tested on version 0.0.8
+* performance: operational
+*/
+function deleteFile(){
+	var self = this;
+	try {
+		fs.unlinkSync(F.path.public()+'cdn/'+self.query['file']);
+		self.json({status:true});
+	  } catch(err) {
+		console.error(err)
+		self.json({status:false});
+	  }
+}
 
 /*
 * Route to send Messages
